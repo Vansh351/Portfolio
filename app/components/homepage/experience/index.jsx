@@ -4,7 +4,7 @@ import { experiences } from "@/utils/data/experience";
 import Image from "next/image";
 import { BsPersonWorkspace } from "react-icons/bs";
 import experience from '../../../assets/lottie/code.json';
-import AnimationLottie from "../../helper/animation-lottie";
+// import AnimationLottie from "../../helper/animation-lottie";
 import Link from 'next/link';
 import dynamic from 'next/dynamic'
 
@@ -12,6 +12,11 @@ const GlowCardWithNoSSR = dynamic(
 	() => import('../../helper/glow-card'),
 	{ ssr: false }
 )
+
+const AnimationLottie = dynamic(
+  () => import('../../helper/animation-lottie'),
+  { ssr: false }
+);
 
 function Experience() {
   return (
