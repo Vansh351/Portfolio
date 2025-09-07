@@ -8,6 +8,16 @@ import "./css/card.scss";
 import "./css/globals.scss";
 const inter = Inter({ subsets: ["latin"] });
 
+export const metadata = {
+  title: "Vansh Chauhan | Portfolio",
+  description: "My personal portfolio website",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
+  },
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
