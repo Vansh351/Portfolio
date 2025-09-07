@@ -1,11 +1,16 @@
 "use client"
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 const GlowCard = ({ children , identifier}) => {
+  const containerRef = useRef(null);
+
   useEffect(() => {
-    const CONTAINER = document.querySelector(`.glow-container-${identifier}`);
+    const CONTAINER = containerRef.current;
     const CARDS = document.querySelectorAll(`.glow-card-${identifier}`);
+
+    // Exit early if the elements aren't found
+    if (!CONTAINER || CARDS.length === 0) return;
 
     const CONFIG = {
       proximity: 40,
@@ -17,14 +22,19 @@ const GlowCard = ({ children , identifier}) => {
     };
 
     const UPDATE = (event) => {
+      const MOUSE_X = event?.x;
+      const MOUSE_Y = event?.y;
+
+      if (MOUSE_X === undefined || MOUSE_Y === undefined) return;
+
       for (const CARD of CARDS) {
         const CARD_BOUNDS = CARD.getBoundingClientRect();
 
         if (
-          event?.x > CARD_BOUNDS.left - CONFIG.proximity &&
-          event?.x < CARD_BOUNDS.left + CARD_BOUNDS.width + CONFIG.proximity &&
-          event?.y > CARD_BOUNDS.top - CONFIG.proximity &&
-          event?.y < CARD_BOUNDS.top + CARD_BOUNDS.height + CONFIG.proximity
+          MOUSE_X > CARD_BOUNDS.left - CONFIG.proximity &&
+          MOUSE_X < CARD_BOUNDS.left + CARD_BOUNDS.width + CONFIG.proximity &&
+          MOUSE_Y > CARD_BOUNDS.top - CONFIG.proximity &&
+          MOUSE_Y < CARD_BOUNDS.top + CARD_BOUNDS.height + CONFIG.proximity
         ) {
           CARD.style.setProperty('--active', 1);
         } else {
@@ -37,7 +47,7 @@ const GlowCard = ({ children , identifier}) => {
         ];
 
         let ANGLE =
-          (Math.atan2(event?.y - CARD_CENTER[1], event?.x - CARD_CENTER[0]) *
+          (Math.atan2(MOUSE_Y - CARD_CENTER[1], MOUSE_X - CARD_CENTER[0]) *
             180) /
           Math.PI;
 
@@ -60,16 +70,15 @@ const GlowCard = ({ children , identifier}) => {
     };
 
     RESTYLE();
-    UPDATE();
 
     // Cleanup event listener
     return () => {
       document.body.removeEventListener('pointermove', UPDATE);
     };
-  }, [identifier]);
+  }, [identifier]); // identifier is a dependency
 
   return (
-    <div className={`glow-container-${identifier} glow-container`}>
+    <div ref={containerRef} className={`glow-container-${identifier} glow-container`}>
       <article className={`glow-card glow-card-${identifier} h-fit cursor-pointer border border-[#2a2e5a] transition-all duration-300 relative bg-[#101123] text-gray-200 rounded-xl hover:border-transparent w-full`}>
         <div className="glows"></div>
         {children}
